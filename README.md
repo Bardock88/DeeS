@@ -1,38 +1,61 @@
-# NooDS
-A (hopefully!) speedy DS emulator.
+# DeeS
+Experimental Nintendo DS emulator written in C++ and Kotlin.
 
-NooDS aims to be a fast and portable Nintendo DS emulator. It's not quite there speed-wise, but it offers most other features that you might expect from a DS emulator. It even supports GBA backwards compatibility! I'm doing it for fun and as a learning experience, also because I'm a huge DS fan. It may not be a worthy competitor for the other DS emulators just yet, but I believe that I can get it there someday. If not, that's fine too; like I said, I'm just having fun!
+<span>
+  <img src="https://img.shields.io/static/v1?label=Built%20with&message=C%2B%2B&color=blue"/>
+  <img src="https://img.shields.io/static/v1?label=Built%20with&message=Kotlin&color=blueviolet"/>
+  <img src="https://img.shields.io/static/v1?label=License&message=GPLv3&color=blue"/>
+  <img src="https://img.shields.io/static/v1?label=Supports&message=Android 12%2B&color=green"/>
+</span>
+<br/>
+<span>
+  <a href="https://buymeacoffee.com/antiquecodes">
+    <img src="https://img.shields.io/static/v1?label=Support&message=Buy%20Me%20A%20Coffee&color=yellow"/>
+  </a>
+  <a href="https://paypal.com/paypalme/officialantique">
+    <img src="https://img.shields.io/static/v1?label=Support&message=PayPal&color=009cde"/>
+  </a>
+</span>
 
-## Downloading
-NooDS is available on Android, Linux, macOS, Switch, Vita and Windows. Automatic builds are provided via GitHub Actions; you can download them on the [releases page](https://github.com/Hydr8gon/NooDS/releases).
+# Core
+> **Note**: DeeS currently uses NooDS as its emulation core. DeeS will receive a complete emulation core rewrite in the future.
 
-## Usage
-NooDS should be able to run most things without additional setups. DS BIOS and firmware files must be provided to boot from the DS menu, which can be dumped from a DS with [DSBF Dumper](https://archive.org/details/dsbf-dumper). The firmware must be dumped from an original DS; DSi and 3DS dumps don't have any boot code. A GBA BIOS file must be provided to run GBA games, which can be dumped from many systems with [this dumper](https://github.com/mgba-emu/bios-dump). The BIOS and firmware file paths can be set in the settings. Although not always accurate, save types are automatically detected. Manual alteration of the save type is needed if you load a new game and saving does not work.
+## Requirements
+### Filesystem Example
+- `.../Android/media/com.antique.dees`
+  - `/core`
+    - `bios7.bin` (required by user, may be named .rom) - [LMGT](https://letmegooglethat.com/?q=nintendo+ds+bios)
+    - `bios9.bin` (required by user, may be named .rom) - [LMGT](https://letmegooglethat.com/?q=nintendo+ds+bios)
+    - `firmware.bin` (required by user, may be named .rom) - [LMGT](https://letmegooglethat.com/?q=nintendo+ds+bios)
+    - `gba_bios.bin` (required by user, may be named .rom) - [LMGT](https://letmegooglethat.com/?q=nintendo+ds+bios)
+    - `sd.img` (optional, may be named .raw, 64 MB recommended) - [Virtual SD Card Maker](https://www.mediafire.com/file/cfr9q8542e9lsos/Virtual_SD_Card_Maker.zip/file)
+  - `/roms`
+    - Place .gb, .gba or .nds roms here.
+  - `dees.ini`
 
-## Building for Android
-The easiest way to build for Android would be with [Android Studio](https://developer.android.com/studio). [Android NDK](https://developer.android.com/studio/projects/install-ndk) is needed for building native code. [Command line tools](https://developer.android.com/studio#command-tools) can be alternatively used; use `sdkmanager` to install `build-tools`, `cmake`, `ndk-bundle`, `platform-tools` and `platforms;android-29` and set an `ANDROID_SDK_ROOT` environment variable to the directory containing `cmdline-tools`. You can then run `./gradlew assembleRelease` in the project root directory to build.
+## Latest Changes
+> 2nd December 2022
 
-## Building for Linux or macOS
-[wxWidgets](https://www.wxwidgets.org) and [PortAudio](https://www.portaudio.com) installed via your favourite package manager are needed to build for Linux or macOS. [Homebrew](https://brew.sh) can be used on macOS; no package manager is given by default. The command will look like `apt install libwxgtk3.0-dev portaudio19-dev` (Ubuntu) or `brew install wxmac portaudio` (macOS). You can then run `make` in the project root directory to build.
+- Added native controller support.
+- Added multi-threading option in settings (off = 2, on = 4).
+- Removed 3 thread limit on 3D emulation.
 
-## Building for Switch
-[devkitPro](https://devkitpro.org/wiki/Getting_Started) and the `switch-dev` package are needed to build for the Switch. You can then run `make -f Makefile.switch` in the project root directory to build.
+## Previous Changes
+> 1st December 2022
 
-## Building for Vita
-[Vita SDK](https://vitasdk.org) is needed to build for the Vita. You can then run `make -f Makefile.vita` in the project root directory to build.
+- Fixed an issue where games would not save upon exiting the game.
+- Removed root requirement by transitioning to Scoped Storage.
 
-## Building for Windows
-[MSYS2](https://www.msys2.org) is needed to build for Windows. You can install every needed package by running `pacman -S mingw-w64-x86_64-{gcc,pkg-config,wxWidgets,portaudio,jbigkit} make` once you have that set up and running. It might also be a good idea to run `pacman -Syu` to ensure everything is 
-up to date. You can then run `make` in the project root directory to build.
-
-## References
-* [GBATEK](https://problemkaputt.de/gbatek.htm) by Martin Korth - It's where most of my information came from
-* [GBATEK addendum](https://melonds.kuribo64.net/board/thread.php?id=13) by Arisotura - Some information came from here too as GBATEK isn't perfect
-* Blog posts [1](https://melonds.kuribo64.net/comments.php?id=85), [2](https://melonds.kuribo64.net/comments.php?id=56), [3](https://melonds.kuribo64.net/comments.php?id=32), and [4](https://melonds.kuribo64.net/comments.php?id=27) by Arisotura - Great resources that detail the 3D GPU's lesser-known quirks
-* [DraStic BIOS](https://drive.google.com/file/d/1dl6xgOXc892r43RzkIJKI6nikYIipzoN/view) by Exophase - Reference for the HLE BIOS implementation
-* [ARM Opcode Map](https://imrannazar.com/ARM-Opcode-Map) by Imran Nazar - Used to create the interpreter lookup table
-* Hardware tests by me - When there's something that I can't find or want to verify, I write tests for it myself!
-
-## See also
-* [Hydra's Lair](https://hydr8gon.github.io) - You can read about my progress here!
-* [NooDS Discord](https://discord.gg/JbNz7y4) - We can chat and do other fun stuff here!
+## Social Media
+<span>
+  <img src="https://img.shields.io/static/v1?label=Discord&message=Antique%239837&color=blueviolet"/>
+  <a href="https://reddit.com/u/antique_codes">
+    <img src="https://img.shields.io/static/v1?label=Reddit&message=%40antique_codes&color=red"/>
+  </a>
+  <a href="https://twitch.tv/official_antique">
+    <img src="https://img.shields.io/static/v1?label=Twitch&message=official_antique&color=blueviolet"/>
+  </a>
+  <a href="https://twitter.com/antique_codes">
+    <img src="https://img.shields.io/static/v1?label=Twitter&message=%40antique_codes&color=blue"/>
+  </a>
+</span>
